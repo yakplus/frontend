@@ -1,103 +1,152 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
+import SearchBar from '../components/SearchBar';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
-export default function Home() {
+const MAX_RECENT_SEARCHES = 5; // 최대 저장할 최근 검색어 수
+
+const displayTypes = {
+  symptom: '증상',
+  company: '제조사',
+  medicine: '약품명',
+  natural: '자연어'
+};
+
+const Home = () => {
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [searchBarProps, setSearchBarProps] = useState({
+    initialQuery: '',
+    initialMode: 'keyword',
+    initialType: 'symptom'
+  });
+  const searchBarRef = useRef(null);
+
+  // 최근 검색어 클릭 핸들러
+  const handleRecentSearchClick = (searchItem) => {
+    setSearchBarProps({
+      initialQuery: searchItem.query,
+      initialMode: searchItem.mode,
+      initialType: searchItem.type
+    });
+    // setTimeout을 사용하여 다음 렌더링 사이클에서 포커스
+    setTimeout(() => {
+      searchBarRef.current?.focus();
+    }, 0);
+  };
+
+  // 최근 검색어 로드
+  useEffect(() => {
+    const savedSearches = sessionStorage.getItem('recentSearches');
+    if (savedSearches) {
+      setRecentSearches(JSON.parse(savedSearches));
+    }
+  }, []);
+
+  // 최근 검색어 삭제
+  const removeSearch = (searchToRemove) => {
+    const newSearches = recentSearches.filter(search => search.query !== searchToRemove.query);
+    setRecentSearches(newSearches);
+    sessionStorage.setItem('recentSearches', JSON.stringify(newSearches));
+  };
+
+  // 모든 최근 검색어 삭제
+  const clearAllSearches = () => {
+    setRecentSearches([]);
+    sessionStorage.removeItem('recentSearches');
+  };
+
+  const RecentSearches = () => {
+    if (recentSearches.length === 0) return null;
+  
+    return (
+      <div className="mt-4">
+        <div className="flex flex-wrap gap-2">
+          {recentSearches.map((searchItem, index) => (
+            <div
+              key={index}
+              className="group flex items-center bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700 transition-colors"
+            >
+              <button
+                onClick={() => handleRecentSearchClick(searchItem)}
+                className="px-3 py-1.5 flex items-center gap-2"
+              >
+                {searchItem.query}
+                <span className="text-xs text-gray-500">
+                  {displayTypes[searchItem.type]}
+                </span>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeSearch(searchItem);
+                }}
+                className="pr-2 pl-1 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <svg
+                  className="w-3 h-3 text-gray-500 hover:text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Header />
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <div className="mt-20 mb-16 flex justify-center">
+          <Image
+            src="/logo.svg"
+            alt="약플 로고"
+            width={200}
+            height={200}
+            priority
+          />
+        </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div className="max-w-3xl mx-auto">
+          <SearchBar 
+            ref={searchBarRef}
+            key={JSON.stringify(searchBarProps)} 
+            {...searchBarProps} 
+          />
+          
+          {/* 최근 검색어 */}
+          {recentSearches.length > 0 && (
+            <div className="mt-4 bg-white rounded-lg shadow-sm p-4">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-medium text-gray-900">최근 검색어</h3>
+                <button
+                  onClick={clearAllSearches}
+                  className="text-xs text-gray-500 hover:text-gray-700"
+                >
+                  전체 삭제
+                </button>
+              </div>
+              <RecentSearches />
+            </div>
+          )}
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Footer />
     </div>
   );
-}
+};
+
+export default Home;
