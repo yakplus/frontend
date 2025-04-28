@@ -1,0 +1,27 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches:
+      - dev
+    paths-ignore:
+      - '.github/workflows/**'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Copy frontend code to shared volume
+      run: |
+        rm -rf /deploy/app/*
+        cp -r . /deploy/app/
+
+    - name: Restart Docker (Frontend Node.js)
+      run: |
+        cd /deploy
+        docker-compose down
+        docker-compose up -d --build
