@@ -92,8 +92,8 @@ const updateCache = (prevCache, key, value) => {
   const fetchSuggestions = async (query, type) => {
     try {
       setIsLoading(true);
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8084';
-      const url = `${backendUrl}/api/api/drugs/autocomplete/${type}?q=${encodeURIComponent(query)}`;
+      
+      const url = `/api/api/drugs/autocomplete/${type}?q=${encodeURIComponent(query)}`;
       
       console.log('자동완성 요청 URL:', url);
       
