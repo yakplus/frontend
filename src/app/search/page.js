@@ -2,10 +2,10 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
-import NoImage from '../../../components/NoImage';
-import SearchBar from '../../../components/SearchBar';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import NoImage from '../../components/NoImage';
+import SearchBar from '../../components/SearchBar';
 
 // SearchParams를 사용하는 컴포넌트를 분리
 const SearchResults = () => {
@@ -33,16 +33,15 @@ const SearchResults = () => {
     const apiPage = currentPage - 1; // API에 0부터 시작하는 페이지 인덱스 전달
     const url = `/api/api/drugs/search`;
     const body = {
-      query,
+      query: query,
       page: apiPage,
       size: itemsPerPage,
     };
+
     fetch(
       url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(body),
       })
       .then(res => {
@@ -50,7 +49,7 @@ const SearchResults = () => {
         return res.json();
       })
       .then(data => {
-        const list = data.data.searchResponseList;
+        const list = data.data;
         setFetchedResults(list);
         setTotalResults(list.length);
       })
