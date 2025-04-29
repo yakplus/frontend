@@ -10,6 +10,7 @@ import SearchBar from './SearchBar';
 const SearchPage = ({ searchType }) => {
   const searchParams = useSearchParams();
   const query = searchParams.get('q');
+  const mode = searchParams.get('mode') || 'keyword';
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
@@ -66,7 +67,7 @@ const SearchPage = ({ searchType }) => {
             <SearchBar
               initialQuery={query || ''}
               showTabs={true}
-              initialMode={searchType === 'keyword' ? 'keyword' : 'keyword'}
+              initialMode={mode}
             />
           </div>
           <div className="space-y-4 mt-6">
