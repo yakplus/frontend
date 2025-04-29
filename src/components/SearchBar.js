@@ -305,7 +305,7 @@ const updateCache = (prevCache, key, value) => {
     } else {
       // 자연어 검색 처리
       saveRecentSearch(searchQuery, 'natural', searchMode);
-      // router.push(`/search/symptom?q=${encodeURIComponent(searchQuery)}&mode=natural`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 
