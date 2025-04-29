@@ -372,9 +372,11 @@ const updateCache = (prevCache, key, value) => {
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion.text);
     setSuggestions([]);
+    saveRecentSearch(suggestion.text, searchType, 'keyword');
     if (searchType === 'symptom') {
-      saveRecentSearch(suggestion.text, searchType, 'keyword');
       router.push(`/search/symptom?q=${encodeURIComponent(suggestion.text)}`);
+    } else {
+      router.push(`/search?q=${encodeURIComponent(suggestion.text)}`);
     }
   };
 
