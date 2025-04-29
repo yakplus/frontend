@@ -32,7 +32,7 @@ const SearchResults = () => {
     setError(null);
     const apiPage = currentPage - 1; // API에 0부터 시작하는 페이지 인덱스 전달
     fetch(
-      `/api/drugs/search/symptom` +
+      `/api/api/drugs/search/symptom` +
       `?q=${encodeURIComponent(query)}` +
       `&page=${apiPage}&size=${itemsPerPage}`
     )
