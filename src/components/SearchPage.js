@@ -11,7 +11,7 @@ const SearchPage = ({ searchType }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get('q');
-  const mode = searchParams.get('mode') || 'keyword';
+  const mode = searchParams.get('mode');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
@@ -38,31 +38,45 @@ const SearchPage = ({ searchType }) => {
 
     let url;
     let options = { method: 'GET' };
-
-    if (searchType === 'keyword') {
+    if(mode === 'natural') { //자연어 검색
       url = '/api/api/drugs/search';
       options = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, page: apiPage, size: itemsPerPage })
       };
-    } else if (searchType === 'symptom') {
-      url = `/api/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
+    } else { // 키워드 검색 모드 분기
+      if(searchType === 'symptom') { // 증상 검색
+        url = `/api/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
+      } else if(searchType === 'name') { // 약품명 검색
+        url = `/api/api/drugs/search/name?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
+      }
     }
 
-    fetch(url, options)
+    // if (searchType === 'natural') {
+    //   url = '/api/api/drugs/search';
+    //   options = {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ query, page: apiPage, size: itemsPerPage })
+    //   };
+    // } else if (searchType === 'symptom') {
+    //   url = `/api/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
+    // }
+    
+    fetch(url, options) // 검색 타입에 따라 데이터 받아오는 방식 분기됨. !!! response 형식 정해지면 수정 필요
       .then(res => {
         if (!res.ok) throw new Error('서버 에러');
         return res.json();
       })
       .then(data => {
-        let list = searchType === 'keyword' ? data.data : data.data.searchResponseList;
+        let list = mode === 'keyword' ? data.data.searchResponseList : data.data;
         setFetchedResults(list);
         setTotalResults(list.length);
       })
       .catch(err => setError(err.message))
       .finally(() => setIsLoading(false));
-  }, [query, currentPage, searchType]);
+  }, [query, currentPage, mode]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

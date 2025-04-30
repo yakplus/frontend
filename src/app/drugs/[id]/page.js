@@ -105,12 +105,11 @@ export default function DrugDetailPage() {
 
   useEffect(() => {
     // API 개발이 완료되면 아래 주석을 해제하고 mock 데이터 대신 실제 API를 사용하면 됩니다.
-    /*
+    
     const fetchDrugDetail = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/api/drugs/${drugId}`);
-        
+        const response = await fetch(`/api/api/drugs/search/detail/${drugId}`);
         if (!response.ok) {
           throw new Error('약품 정보를 불러오는 데 실패했습니다.');
         }
@@ -126,16 +125,16 @@ export default function DrugDetailPage() {
     };
 
     fetchDrugDetail();
-    */
+    
     
     // Mock 데이터 사용
-    setTimeout(() => {
-      setDrug({
-        ...mockDrugData,
-        item_seq: drugId, // URL의 ID 반영
-      });
-      setLoading(false);
-    }, 500); // 로딩 효과를 위한 지연 시간
+//     setTimeout(() => {
+//       setDrug({
+//         ...mockDrugData,
+//         item_seq: drugId, // URL의 ID 반영
+//       });
+//       setLoading(false);
+//     }, 500); // 로딩 효과를 위한 지연 시간
   }, [drugId]);
 
   if (loading) {
@@ -165,17 +164,12 @@ export default function DrugDetailPage() {
   }
 
   // 약품 전문/일반 구분
-  const getEtcOtcName = (code) => {
-    switch(code) {
-      case "0": return "일반의약품";
-      case "1": return "전문의약품";
-      case "2": return "지정의약품";
-      default: return "정보없음";
-    }
+  const getEtcOtcName = (isGeneral) => {
+    return isGeneral ? "일반의약품" : "전문의약품";
   };
 
-  // nb_doc_data의 키 값만 추출
-  const nbDocKeys = drug.nb_doc_data ? Object.keys(drug.nb_doc_data) : [];
+  // 주의사항 키 값 추출
+  const precautionKeys = drug.precaution ? Object.keys(drug.precaution) : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -187,10 +181,10 @@ export default function DrugDetailPage() {
             <div className="flex flex-col md:flex-row gap-8 mb-8">
               {/* 약품 이미지 */}
               <div className="w-full md:w-80 h-80 flex-shrink-0">
-                {drug.img_url ? (
+                {drug.imageUrl ? (
                   <img
-                    src={drug.img_url}
-                    alt={drug.item_name}
+                    src={drug.imageUrl}
+                    alt={drug.drugName}
                     className="w-full h-full rounded-lg object-contain border border-gray-200"
                   />
                 ) : (
@@ -200,37 +194,35 @@ export default function DrugDetailPage() {
 
               {/* 약품 기본 정보 */}
               <div className="flex-1 space-y-4">
-                <h1 className="text-2xl font-bold text-gray-800">{drug.item_name}</h1>
+                <h1 className="text-2xl font-bold text-gray-800">{drug.drugName}</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">제약회사</span>
-                      <span className="text-gray-700">{drug.entp_name}</span>
+                      <span className="text-gray-700">{drug.company}</span>
                     </div>
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">품목기준코드</span>
-                      <span className="text-gray-700">{drug.item_seq}</span>
+                      <span className="text-gray-700">{drug.drugId}</span>
                     </div>
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">보관방법</span>
-                      <span className="text-gray-700">{drug.storage_method}</span>
+                      <span className="text-gray-700">{drug.storeMethod}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center">
-                      <span className="w-24 text-sm font-medium text-gray-500">전문/일반</span>
-                      <span className="text-gray-700">{getEtcOtcName(drug.etc_otc_code)}</span>
+                      <span className="w-24 text-sm font-medium text-gray-500">의약품 구분</span>
+                      <span className="text-gray-700">{getEtcOtcName(drug.isGeneral)}</span>
                     </div>
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">허가일</span>
-                      <span className="text-gray-700">{drug.item_permit_date}</span>
+                      <span className="text-gray-700">{drug.permitDate}</span>
                     </div>
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">유효기간</span>
                       <span className="text-gray-700">
-                        {drug.valid_term ? drug.valid_term.split(',').map((term, index) => (
-                          <div key={index}>{term.trim()}</div>
-                        )) : '정보 없음'}
+                        {drug.validTerm ? drug.validTerm : '정보 없음'}
                       </span>
                     </div>
                   </div>
@@ -239,9 +231,9 @@ export default function DrugDetailPage() {
             </div>
 
             {/* 성분 정보 */}
-            {drug.material_name && drug.material_name.length > 0 && (
+            {drug.materialInfo && drug.materialInfo.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-lg font-bold px-4 py-2 text-[#2BA89C] rounded-md mb-3 border-b border-gray-300 pb-2">
+                <h2 className="text-lg font-bold px-4 py-2 rounded-md mb-3 border-b border-gray-300 pb-2">
                   성분 정보
                 </h2>
                 <div className="overflow-x-auto">
@@ -256,7 +248,7 @@ export default function DrugDetailPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {drug.material_name.map((material, index) => (
+                      {drug.materialInfo.map((material, index) => (
                         <tr key={index}>
                           <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.성분명}</td>
                           <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.분량}</td>
@@ -279,9 +271,9 @@ export default function DrugDetailPage() {
                   효능효과
                 </h2>
                 <div className="px-4 py-2 text-gray-700">
-                  {drug.ee_doc_data?.length > 0 ? (
+                  {drug.efficacy?.length > 0 ? (
                     <ul className="list-none pl-0 space-y-1">
-                      {drug.ee_doc_data.map((item, i) => (
+                      {drug.efficacy.map((item, i) => (
                         <li key={i}>{item}</li>
                       ))}
                     </ul>
@@ -297,9 +289,9 @@ export default function DrugDetailPage() {
                   용법용량
                 </h2>
                 <div className="px-4 py-2 text-gray-700">
-                  {drug.ud_doc_data?.length > 0 ? (
+                  {drug.usage?.length > 0 ? (
                     <ul className="list-none pl-0 space-y-1">
-                      {drug.ud_doc_data.map((item, i) => (
+                      {drug.usage.map((item, i) => (
                         <li key={i}>{item}</li>
                       ))}
                     </ul>
@@ -310,15 +302,15 @@ export default function DrugDetailPage() {
               </div>
 
               {/* 주의사항 및 기타 정보 */}
-              {nbDocKeys.length > 0 && nbDocKeys.map((key) => (
+              {precautionKeys.length > 0 && precautionKeys.map((key) => (
                 <div key={key} className="space-y-3">
                   <h2 className="text-lg font-bold px-4 py-2 text-[#2BA89C] rounded-md border-b border-gray-300 pb-2">
                     {key}
                   </h2>
                   <div className="px-4 py-2 text-gray-700">
-                    {drug.nb_doc_data[key]?.length > 0 ? (
+                    {drug.precaution[key]?.length > 0 ? (
                       <ul className="list-none pl-0 space-y-1">
-                        {drug.nb_doc_data[key].map((item, i) => (
+                        {drug.precaution[key].map((item, i) => (
                           <li key={i}>{item}</li>
                         ))}
                       </ul>

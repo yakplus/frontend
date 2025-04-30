@@ -30,7 +30,7 @@ const NoImage = ({ className = "" }) => {
           />
           
           {/* 약병 라벨 */}
-          <rect 
+          {/* <rect 
             x="8" 
             y="10" 
             width="8" 
@@ -39,14 +39,14 @@ const NoImage = ({ className = "" }) => {
             strokeWidth="1" 
             stroke="#9CA3AF" 
             fill="none" 
-          />
+          /> */}
           
-          {/* X 표시 - 우측 하단으로 이동 */}
+          {/* X 표시 - 우측 하단으로 이동 및 크기 확대 */}
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="M17 17L14 20M14 17l3 3"
+            strokeWidth="2"
+            d="M19 15L13 21M13 15l6 6" 
             stroke="#EF4444"
           />
         </svg>
