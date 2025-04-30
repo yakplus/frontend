@@ -293,7 +293,7 @@ const updateCache = (prevCache, key, value) => {
       switch (searchType) {
         case 'symptom':
           saveRecentSearch(searchQuery, searchType, searchMode);
-          router.push(`/search/symptom?q=${encodeURIComponent(searchQuery)}`);
+          router.push(`/search/symptom?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}`);
           break;
         case 'company':
           // 추후 구현
@@ -305,7 +305,7 @@ const updateCache = (prevCache, key, value) => {
     } else {
       // 자연어 검색 처리
       saveRecentSearch(searchQuery, 'natural', searchMode);
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}`);
     }
   };
 
@@ -372,9 +372,11 @@ const updateCache = (prevCache, key, value) => {
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion.text);
     setSuggestions([]);
+    saveRecentSearch(suggestion.text, searchType, 'keyword');
     if (searchType === 'symptom') {
-      saveRecentSearch(suggestion.text, searchType, 'keyword');
-      router.push(`/search/symptom?q=${encodeURIComponent(suggestion.text)}`);
+      router.push(`/search/symptom?q=${encodeURIComponent(suggestion.text)}&mode=keyword`);
+    } else {
+      router.push(`/search?q=${encodeURIComponent(suggestion.text)}&mode=keyword`);
     }
   };
 
