@@ -209,12 +209,13 @@ export default function DrugDetailPage() {
                       <span className="w-24 text-sm font-medium text-gray-500">보관방법</span>
                       <span className="text-gray-700">{drug.storeMethod}</span>
                     </div>
-                  </div>
-                  <div className="space-y-2">
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">의약품 구분</span>
-                      <span className="text-gray-700">{getEtcOtcName(drug.isGeneral)}</span>
+                      <span className="text-gray-700">{getEtcOtcName(drug.isGeneral)} / {drug.isHerbal ? '한약' : '양약'}</span>
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">허가일</span>
                       <span className="text-gray-700">{drug.permitDate}</span>
@@ -223,6 +224,18 @@ export default function DrugDetailPage() {
                       <span className="w-24 text-sm font-medium text-gray-500">유효기간</span>
                       <span className="text-gray-700">
                         {drug.validTerm ? drug.validTerm : '정보 없음'}
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="w-24 text-sm font-medium text-gray-500">취소일자</span>
+                      <span className="text-gray-700">
+                        {drug.cancelDate ? drug.cancelDate : '해당 없음'}
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="w-24 text-sm font-medium text-gray-500">취소사유</span>
+                      <span className="text-gray-700">
+                        {drug.cancelName ? drug.cancelName : '해당 없음'}
                       </span>
                     </div>
                   </div>
@@ -302,24 +315,31 @@ export default function DrugDetailPage() {
               </div>
 
               {/* 주의사항 및 기타 정보 */}
-              {precautionKeys.length > 0 && precautionKeys.map((key) => (
-                <div key={key} className="space-y-3">
+              {precautionKeys.length > 0 && (
+                <div className="space-y-3">
                   <h2 className="text-lg font-bold px-4 py-2 text-[#2BA89C] rounded-md border-b border-gray-300 pb-2">
-                    {key}
+                    주의사항
                   </h2>
-                  <div className="px-4 py-2 text-gray-700">
-                    {drug.precaution[key]?.length > 0 ? (
-                      <ul className="list-none pl-0 space-y-1">
-                        {drug.precaution[key].map((item, i) => (
-                          <li key={i}>{item}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p>정보가 없습니다.</p>
-                    )}
-                  </div>
+                  {precautionKeys.map((key) => (
+                    <div key={key} className="space-y-3">
+                      <h3 className="text-md font-semibold px-4 py-2 text-gray-700">
+                        {key}
+                      </h3>
+                      <div className="px-4 py-2 text-gray-700">
+                        {drug.precaution[key]?.length > 0 ? (
+                          <ul className="list-none pl-0 space-y-1">
+                            {drug.precaution[key].map((item, i) => (
+                              <li key={i}>{item}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p>정보가 없습니다.</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
