@@ -12,6 +12,7 @@ const SearchPage = ({ searchType }) => {
   const router = useRouter();
   const query = searchParams.get('q');
   const mode = searchParams.get('mode');
+  const type = searchParams.get('type') || searchType;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
@@ -52,21 +53,10 @@ const SearchPage = ({ searchType }) => {
         url = `/api/api/drugs/search/name?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
       }
     }
-
-    // if (searchType === 'natural') {
-    //   url = '/api/api/drugs/search';
-    //   options = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ query, page: apiPage, size: itemsPerPage })
-    //   };
-    // } else if (searchType === 'symptom') {
-    //   url = `/api/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
-    // }
     
     fetch(url, options) // 검색 타입에 따라 데이터 받아오는 방식 분기됨. !!! response 형식 정해지면 수정 필요
       .then(res => {
-        if (!res.ok) throw new Error('서버 에러');
+        if (!res.ok) throw new Error(res.message);
         return res.json();
       })
       .then(data => {
@@ -88,6 +78,7 @@ const SearchPage = ({ searchType }) => {
               initialQuery={query || ''}
               showTabs={true}
               initialMode={mode}
+              initialType={type}
             />
           </div>
           <div className="space-y-4 mt-6">

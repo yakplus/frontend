@@ -16,7 +16,7 @@ const MAX_RECENT_SEARCHES = 5; // 최대 저장할 최근 검색어 수
 const displayTypes = {
   symptom: '증상',
   company: '제조사',
-  medicine: '약품명',
+  name: '약품명',
   natural: '자연어'
 };
 

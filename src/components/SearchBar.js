@@ -37,12 +37,10 @@ const SearchIcon = ({ color = '#2BA89C', onClick }) => (
   </button>
 );
 
-const SearchBar = ({ initialQuery = '', showTabs = true, initialMode = 'keyword', initialSearchType = 'symptom'}) => {
+const SearchBar = ({ initialQuery = '', showTabs = true, initialMode = 'keyword', initialType = 'symptom'}) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [searchMode, setSearchMode] = useState(initialMode);
-  const urlType = searchParams.get('type');
-  const [searchType, setSearchType] = useState(urlType || initialSearchType);
+  const [searchType, setSearchType] = useState(initialType);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -132,6 +130,7 @@ const updateCache = (prevCache, key, value) => {
     }
   };
 
+  // 자동완성 결과 업데이트
   useEffect(() => {
     if (!isFocused) {
       setSuggestions([]);
@@ -176,17 +175,17 @@ const updateCache = (prevCache, key, value) => {
   };
 
   // 최근 검색어 저장 함수
-  const saveRecentSearch = (query, type, mode) => {
+  const saveRecentSearch = (query, mode, type) => {
     try {
       const savedSearches = sessionStorage.getItem('recentSearches');
       const searches = savedSearches ? JSON.parse(savedSearches) : [];
       
       const newSearch = {
         query: query.trim(),
-        type: type,
-        mode: mode
+        mode: mode,
+        type: type
       };
-
+      
       const filteredSearches = searches.filter(item => item.query !== newSearch.query);
       const updatedSearches = [newSearch, ...filteredSearches].slice(0, 5);
       
@@ -196,6 +195,7 @@ const updateCache = (prevCache, key, value) => {
     }
   };
 
+  // 검색 모드(키워드,자연어) 감지하여 모드별 검색 결과창 라우팅
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -203,23 +203,24 @@ const updateCache = (prevCache, key, value) => {
     if (searchMode === 'keyword') {
       switch (searchType) {
         case 'symptom':
-          saveRecentSearch(searchQuery, searchType, searchMode);
-          router.push(`/search/symptom?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}`);
+          saveRecentSearch(searchQuery, searchMode, searchType);
+          router.push(`/search/symptom?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}&type=${searchType}`);
           break;
         case 'company':
           // 추후 구현
           break;
         case 'name':
-          saveRecentSearch(searchQuery, searchType, searchMode);
-          router.push(`/search/name?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}`);
+          saveRecentSearch(searchQuery, searchMode, searchType);
+          router.push(`/search/name?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}&type=${searchType}`);
           break;
       }
     } else {
       // 자연어 검색 처리
-      saveRecentSearch(searchQuery, 'natural', searchMode);
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}`);
+      saveRecentSearch(searchQuery, searchMode, 'natural');
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}&type=natural`);
     }
   };
+
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -229,6 +230,7 @@ const updateCache = (prevCache, key, value) => {
     setSearchQuery(value);
     setSelectedSuggestion(-1);
   };
+
 
   const handleKeyDown = (e) => {
     if (searchMode === 'natural' && e.key === 'Enter') {
@@ -253,8 +255,8 @@ const updateCache = (prevCache, key, value) => {
       case 'Enter':
         e.preventDefault();
         if (selectedSuggestion >= 0) {
-          setSearchQuery(suggestions[selectedSuggestion].text);
-          setSuggestions([]);
+          const selectedItem = suggestions[selectedSuggestion];
+          handleSuggestionClick(selectedItem);
         } else {
           handleSearch(e);
         }
@@ -284,7 +286,7 @@ const updateCache = (prevCache, key, value) => {
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion.text);
     setSuggestions([]);
-    saveRecentSearch(suggestion.text, searchType, 'keyword');
+    saveRecentSearch(suggestion.text, 'keyword', searchType);
     switch (searchType) {
       case 'symptom':
         router.push(`/search/symptom?q=${encodeURIComponent(suggestion.text)}&mode=keyword&type=${searchType}`);
@@ -423,7 +425,7 @@ const updateCache = (prevCache, key, value) => {
                     } ${type === 'name' ? 'rounded-b-lg' : ''} ${
                       type === 'symptom' ? 'rounded-t-lg' : ''
                     }`}
-                  >
+                  > 
                     {label}
                   </button>
                 ))}
