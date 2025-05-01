@@ -108,7 +108,7 @@ const updateCache = (prevCache, key, value) => {
       console.log('자동완성 응답:', response);
       
       if (!response.ok) {
-        throw new Error('자동완성 데이터를 가져오는데 실패했습니다.');
+        throw new Error(response.message);
       }
       
       const data = await response.json();

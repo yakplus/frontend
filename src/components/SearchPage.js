@@ -13,8 +13,10 @@ const SearchPage = ({ searchType }) => {
   const query = searchParams.get('q');
   const mode = searchParams.get('mode');
   const type = searchParams.get('type') || searchType;
+  const pageParam = searchParams.get('page');
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // URL에 페이지 파라미터가 있으면 사용하고, 없으면 기본값 1 사용
+  const [currentPage, setCurrentPage] = useState(pageParam ? parseInt(pageParam) : 1);
   const [totalResults, setTotalResults] = useState(0);
   const itemsPerPage = 10;
 
@@ -74,6 +76,12 @@ const SearchPage = ({ searchType }) => {
   // 페이지 변경 함수
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+    
+    // URL 업데이트
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    router.push(`${window.location.pathname}?${params.toString()}`);
+    
     // 페이지 상단으로 스크롤
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -96,7 +104,7 @@ const SearchPage = ({ searchType }) => {
           {!isLoading && !error && fetchedResults.length > 0 && (
             <div className="mt-4 mb-2">
               <h2 className="text-lg font-medium text-gray-700">
-                '<span className="text-[#2BA89C] font-bold">{query}</span>' 검색 결과 
+                <span className="text-[#2BA89C] font-bold">{query}</span> 검색 결과 
                 <span className="text-[#2BA89C] font-bold ml-2">{totalResults.toLocaleString()}</span>건
               </h2>
             </div>
