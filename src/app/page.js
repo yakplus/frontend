@@ -1,10 +1,15 @@
 'use client';
-
+import dynamic from 'next/dynamic';
 import { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
-import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+
+const SearchBar = dynamic(() => import('../components/SearchBar'), {
+  ssr: false,
+  loading: () => <div>검색창 로딩 중...</div>,
+});
+
 
 const MAX_RECENT_SEARCHES = 5; // 최대 저장할 최근 검색어 수
 
