@@ -15,12 +15,11 @@ export default function DrugDetailPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // API 개발이 완료되면 아래 주석을 해제하고 mock 데이터 대신 실제 API를 사용하면 됩니다.
     
     const fetchDrugDetail = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/api/drugs/search/detail/${drugId}`);
+        const response = await fetch(`/api/drugs/search/detail/${drugId}`);
         if (!response.ok) {
           throw new Error('약품 정보를 불러오는 데 실패했습니다.');
         }
@@ -36,16 +35,6 @@ export default function DrugDetailPage() {
     };
 
     fetchDrugDetail();
-    
-    
-    // Mock 데이터 사용
-//     setTimeout(() => {
-//       setDrug({
-//         ...mockDrugData,
-//         item_seq: drugId, // URL의 ID 반영
-//       });
-//       setLoading(false);
-//     }, 500); // 로딩 효과를 위한 지연 시간
   }, [drugId]);
 
   if (loading) {

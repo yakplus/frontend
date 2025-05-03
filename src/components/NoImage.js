@@ -42,15 +42,15 @@ const NoImage = ({ className = "" }) => {
           /> */}
           
           {/* X 표시 - 우측 하단으로 이동 및 크기 확대 */}
-          <path
+          {/* <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="2"
             d="M19 15L13 21M13 15l6 6" 
             stroke="#EF4444"
-          />
+          /> */}
         </svg>
-        <p className="mt-1 text-xs text-gray-500">약품 이미지 없음</p>
+        <p className="mt-1 text-xs text-gray-500">약품 이미지 준비 중</p>
       </div>
     </div>
   );
