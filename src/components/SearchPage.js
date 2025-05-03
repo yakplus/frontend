@@ -39,22 +39,23 @@ const SearchPage = ({ searchType }) => {
     setError(null);
     const apiPage = currentPage - 1;
 
-    let url;
+    let url = `/api/drugs/search/${type}?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
     let options = { method: 'GET' };
-    if(mode === 'natural') { //자연어 검색
-      url = '/api/api/drugs/search';
-      options = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, page: apiPage, size: itemsPerPage })
-      };
-    } else { // 키워드 검색 모드 분기
-      if(searchType === 'symptom') { // 증상 검색
-        url = `/api/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
-      } else if(searchType === 'name') { // 약품명 검색
-        url = `/api/api/drugs/search/name?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
-      }
-    }
+    // if(mode === 'natural') { //자연어 검색
+    //   url = '/api/drugs/search';
+    //   options = {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ query, page: apiPage, size: itemsPerPage })
+    //   };
+    // } else { // 키워드 검색 모드 분기
+    //   if(searchType === 'symptom') { // 증상 검색
+    //     url = `/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
+    //   } else if(searchType === 'name') { // 약품명 검색
+    //     url = `/api/drugs/search/name?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
+    //   }
+    // }
+    
     
     fetch(url, options) // 검색 타입에 따라 데이터 받아오는 방식 분기됨. !!! response 형식 정해지면 수정 필요
       .then(res => {

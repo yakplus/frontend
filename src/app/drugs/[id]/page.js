@@ -19,7 +19,7 @@ export default function DrugDetailPage() {
     const fetchDrugDetail = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/api/drugs/search/detail/${drugId}`);
+        const response = await fetch(`/api/drugs/search/detail/${drugId}`);
         if (!response.ok) {
           throw new Error('약품 정보를 불러오는 데 실패했습니다.');
         }

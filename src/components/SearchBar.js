@@ -94,7 +94,7 @@ const updateCache = (prevCache, key, value) => {
     try {
       setIsLoading(true);
       
-      const url = `/api/api/drugs/autocomplete/${type}?q=${encodeURIComponent(query)}`;
+      const url = `/api/drugs/autocomplete/${type}?q=${encodeURIComponent(query)}`;
       
       console.log('자동완성 요청 URL:', url);
       
