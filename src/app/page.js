@@ -5,11 +5,31 @@ import Image from "next/image";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+// 스켈레톤 UI 컴포넌트
+const SearchBarSkeleton = () => (
+  <div className="w-full">
+    {/* 검색 모드 선택 탭을 위한 스켈레톤 */}
+    <div className="flex mb-4 border-b border-gray-200">
+      <div className="px-8 py-3 w-20 bg-gray-100 animate-pulse rounded-md"></div>
+      <div className="px-8 py-3 w-20 bg-gray-100 animate-pulse rounded-md ml-4"></div>
+    </div>
+    
+    {/* 검색 입력 필드를 위한 스켈레톤 */}
+    <div className="flex gap-4">
+      <div className="flex-1 relative">
+        <div className="w-full h-[52px] rounded-lg bg-gray-100 animate-pulse"></div>
+      </div>
+      
+      {/* 드롭다운 버튼을 위한 스켈레톤 */}
+      <div className="w-[100px] h-[52px] bg-gray-100 animate-pulse rounded-lg"></div>
+    </div>
+  </div>
+);
+
 const SearchBar = dynamic(() => import('../components/SearchBar'), {
   ssr: false,
-  loading: () => <div>검색창 로딩 중...</div>,
+  loading: () => <SearchBarSkeleton />,
 });
-
 
 const MAX_RECENT_SEARCHES = 5; // 최대 저장할 최근 검색어 수
 

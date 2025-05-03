@@ -13,8 +13,10 @@ const SearchPage = ({ searchType }) => {
   const query = searchParams.get('q');
   const mode = searchParams.get('mode');
   const type = searchParams.get('type') || searchType;
+  const pageParam = searchParams.get('page');
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // URL에 페이지 파라미터가 있으면 사용하고, 없으면 기본값 1 사용
+  const [currentPage, setCurrentPage] = useState(pageParam ? parseInt(pageParam) : 1);
   const [totalResults, setTotalResults] = useState(0);
   const itemsPerPage = 10;
 
@@ -62,11 +64,27 @@ const SearchPage = ({ searchType }) => {
       .then(data => {
         let list = mode === 'keyword' ? data.data.searchResponseList : data.data;
         setFetchedResults(list);
-        setTotalResults(list.length);
+        
+        // totalResponseCount가 있으면 그 값을 사용하고, 없으면 현재 목록 길이를 사용
+        const totalCount = data.data.totalResponseCount || list.length;
+        setTotalResults(totalCount);
       })
       .catch(err => setError(err.message))
       .finally(() => setIsLoading(false));
-  }, [query, currentPage, mode]);
+  }, [query, currentPage, mode, searchType, itemsPerPage]);
+
+  // 페이지 변경 함수
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    
+    // URL 업데이트
+    const params = new URLSearchParams(searchParams);
+    params.set('page', pageNumber.toString());
+    router.push(`${window.location.pathname}?${params.toString()}`);
+    
+    // 페이지 상단으로 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -81,6 +99,17 @@ const SearchPage = ({ searchType }) => {
               initialType={type}
             />
           </div>
+          
+          {/* 검색 결과 정보 헤더 */}
+          {!isLoading && !error && fetchedResults.length > 0 && (
+            <div className="mt-4 mb-2">
+              <h2 className="text-lg font-medium text-gray-700">
+                <span className="text-[#2BA89C] font-bold">{query}</span> 검색 결과 
+                <span className="text-[#2BA89C] font-bold ml-2">{totalResults.toLocaleString()}</span>건
+              </h2>
+            </div>
+          )}
+          
           <div className="space-y-4 mt-6">
             {isLoading ? (
               <div className="text-center py-16">로딩 중...</div>
@@ -147,21 +176,64 @@ const SearchPage = ({ searchType }) => {
               </div>
             )}
           </div>
-          {fetchedResults.length > 0 && (
+          
+          {/* 페이지네이션 개선 */}
+          {totalResults > 0 && (
             <div className="flex justify-center mt-8 mb-4 gap-2">
-              {[...Array(Math.ceil(totalResults / itemsPerPage)).keys()].map(i => (
+              {/* 이전 페이지 버튼 */}
+              {currentPage > 1 && (
                 <button
-                  key={i + 1}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded ${
-                    i + 1 === currentPage
-                      ? 'bg-[#2BA89C] text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
-                  }`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className="px-3 py-1 rounded bg-white text-gray-600 hover:bg-gray-100"
                 >
-                  {i + 1}
+                  &lt;
                 </button>
-              ))}
+              )}
+              
+              {/* 페이지 번호 버튼 */}
+              {Array.from({ length: Math.min(5, Math.ceil(totalResults / itemsPerPage)) }, (_, i) => {
+                // 현재 페이지를 중심으로 페이지 번호 표시
+                const totalPages = Math.ceil(totalResults / itemsPerPage);
+                let pageNum;
+                
+                if (totalPages <= 5) {
+                  // 전체 페이지가 5개 이하면 모든 페이지 표시
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  // 현재 페이지가 1,2,3이면 1~5 표시
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  // 현재 페이지가 마지막 3페이지 안에 있으면 마지막 5페이지 표시
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  // 그 외에는 현재 페이지 중심으로 앞뒤 2페이지씩 표시
+                  pageNum = currentPage - 2 + i;
+                }
+                
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`px-3 py-1 rounded ${
+                      pageNum === currentPage
+                        ? 'bg-[#2BA89C] text-white'
+                        : 'bg-white text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              
+              {/* 다음 페이지 버튼 */}
+              {currentPage < Math.ceil(totalResults / itemsPerPage) && (
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className="px-3 py-1 rounded bg-white text-gray-600 hover:bg-gray-100"
+                >
+                  &gt;
+                </button>
+              )}
             </div>
           )}
         </div>
