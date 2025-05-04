@@ -63,11 +63,11 @@ const SearchPage = ({ searchType }) => {
         return res.json();
       })
       .then(data => {
-        let list = mode === 'keyword' ? data.data.searchResponseList : data.data;
+        let list = data.data.searchResponseList;
         setFetchedResults(list);
         
         // totalResponseCount가 있으면 그 값을 사용하고, 없으면 현재 목록 길이를 사용
-        const totalCount = data.data.totalResponseCount || list.length;
+        const totalCount = data.data.totalResponseCount;
         setTotalResults(totalCount);
       })
       .catch(err => setError(err.message))
