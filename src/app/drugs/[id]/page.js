@@ -165,7 +165,7 @@ export default function DrugDetailPage() {
                         <tr key={index}>
                           <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
                             <Link
-                              href={`/search/material?q=${encodeURIComponent(material.성분명)}&mode=keyword&type=material`}
+                              href={`/search/ingredient?q=${encodeURIComponent(material.성분명)}&mode=keyword&type=ingredient`}
                               className="text-blue-600 hover:text-blue-800 hover:underline"
                             >
                               {material.성분명}
