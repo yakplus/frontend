@@ -67,7 +67,7 @@ const updateCache = (prevCache, key, value) => {
 
   const searchTypes = {
     symptom: '증상',
-    company: '제조사',
+    material: '성분명',
     name: '약품명'
   };
 
@@ -79,8 +79,8 @@ const updateCache = (prevCache, key, value) => {
     switch (searchType) {
       case 'symptom':
         return '증상을 입력하세요';
-      case 'company':
-        return '제조사를 입력하세요';
+      case 'material':
+        return '성분명을 입력하세요';
       case 'name':
         return '약품명을 입력하세요';
       default:
@@ -206,8 +206,9 @@ const updateCache = (prevCache, key, value) => {
           saveRecentSearch(searchQuery, searchMode, searchType);
           router.push(`/search/symptom?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}&type=${searchType}`);
           break;
-        case 'company':
-          // 추후 구현
+        case 'material':
+          saveRecentSearch(searchQuery, searchMode, searchType);
+          router.push(`/search/material?q=${encodeURIComponent(searchQuery)}&mode=${searchMode}&type=${searchType}`);
           break;
         case 'name':
           saveRecentSearch(searchQuery, searchMode, searchType);
