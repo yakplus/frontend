@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import NoImage from '@/components/NoImage';
+import Link from 'next/link';
 
 export default function DrugDetailPage() {
   const params = useParams();
@@ -111,7 +112,7 @@ export default function DrugDetailPage() {
                     </div>
                     <div className="flex items-center">
                       <span className="w-24 text-sm font-medium text-gray-500">의약품 구분</span>
-                      <span className="text-gray-700">{getEtcOtcName(drug.isGeneral)} / {drug.isHerbal ? '한약' : '양약'}</span>
+                      <span className="text-gray-700">{getEtcOtcName(drug.isGeneral)}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -157,17 +158,22 @@ export default function DrugDetailPage() {
                         <th className="px-4 py-2 bg-gray-50 text-left text-sm font-medium text-gray-500">분량</th>
                         <th className="px-4 py-2 bg-gray-50 text-left text-sm font-medium text-gray-500">단위</th>
                         <th className="px-4 py-2 bg-gray-50 text-left text-sm font-medium text-gray-500">총량</th>
-                        <th className="px-4 py-2 bg-gray-50 text-left text-sm font-medium text-gray-500">규격</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {drug.materialInfo.map((material, index) => (
                         <tr key={index}>
-                          <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.성분명}</td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
+                            <Link
+                              href={`/search/material?q=${encodeURIComponent(material.성분명)}&mode=keyword&type=material`}
+                              className="text-blue-600 hover:text-blue-800 hover:underline"
+                            >
+                              {material.성분명}
+                            </Link>
+                          </td>
                           <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.분량}</td>
                           <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.단위}</td>
                           <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.총량}</td>
-                          <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{material.규격}</td>
                         </tr>
                       ))}
                     </tbody>
