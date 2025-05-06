@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useRouter } from 'next/navigation';
 
 // 스켈레톤 UI 컴포넌트
 const SearchBarSkeleton = () => (
@@ -48,18 +49,16 @@ const Home = () => {
     initialType: 'symptom'
   });
   const searchBarRef = useRef(null);
+  const router = useRouter();
 
   // 최근 검색어 클릭 핸들러
   const handleRecentSearchClick = (searchItem) => {
-    setSearchBarProps({
-      initialQuery: searchItem.query,
-      initialMode: searchItem.mode,
-      initialType: searchItem.type
-    });
-    // setTimeout을 사용하여 다음 렌더링 사이클에서 포커스
-    setTimeout(() => {
-      searchBarRef.current?.focus();
-    }, 0);
+    // 검색어 클릭 시 바로 검색 페이지로 이동
+    if (searchItem.mode === 'natural') {
+      router.push(`/search?q=${encodeURIComponent(searchItem.query)}&mode=${searchItem.mode}&type=natural`);
+    } else {
+      router.push(`/search/${searchItem.type}?q=${encodeURIComponent(searchItem.query)}&mode=${searchItem.mode}&type=${searchItem.type}`);
+    }
   };
 
   // 최근 검색어 로드

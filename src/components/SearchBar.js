@@ -96,7 +96,7 @@ const updateCache = (prevCache, key, value) => {
       
       const url = `/api/drugs/autocomplete/${type}?q=${encodeURIComponent(query)}`;
       
-      console.log('자동완성 요청 URL:', url);
+      // console.log('자동완성 요청 URL:', url);
       
       const response = await fetch(url, {
         method: 'GET',
@@ -105,14 +105,14 @@ const updateCache = (prevCache, key, value) => {
         },
       });
       
-      console.log('자동완성 응답:', response);
+      // console.log('자동완성 응답:', response);
       
       if (!response.ok) {
         throw new Error(response.message);
       }
       
       const data = await response.json();
-      console.log('자동완성 데이터:', data);
+      // console.log('자동완성 데이터:', data);
       
       // 캐시 업데이트 - 기존 결과를 새로운 결과로 덮어씌움
       const cacheKey = `${type}:${query}`;
@@ -146,14 +146,14 @@ const updateCache = (prevCache, key, value) => {
     }
   
     if (autoCompleteCache[cacheKey]) {
-      console.log('캐시 사용:', cacheKey);
+      // console.log('캐시 사용:', cacheKey);
       setSuggestions(autoCompleteCache[cacheKey].map(text => ({ text, category: searchTypes[searchType] })));
       return;
     }
   
     // 300ms 후에 서버 요청 예약
     const handler = setTimeout(() => {
-      console.log('서버 요청:', trimmedQuery);
+      // console.log('서버 요청:', trimmedQuery);
       fetchSuggestions(trimmedQuery, searchType)
         .then(results => {
           setSuggestions(results.map(text => ({ text, category: searchTypes[searchType] })));
@@ -350,7 +350,7 @@ const updateCache = (prevCache, key, value) => {
             onFocus={() => setIsFocused(true)}
             onBlur={handleBlur}
             maxLength={searchMode === 'natural' ? 20 : undefined}
-            className={`w-full pl-16 pr-4 py-4 border rounded-lg focus:outline-none transition-all hover:shadow-md ${
+            className={`w-full pl-16 pr-4 py-4 border rounded-lg focus:outline-none transition-all hover:shadow-md placeholder-gray-900 placeholder-opacity-100 ${
               searchMode === 'keyword'
                 ? 'border-[#2BA89C] focus:ring-2 focus:ring-[#2BA89C]/20'
                 : 'border-[#2978F2] focus:ring-2 focus:ring-[#2978F2]/20'
@@ -419,7 +419,6 @@ const updateCache = (prevCache, key, value) => {
                       setSearchType(type);
                       setIsDropdownOpen(false);
                       setSuggestions([]);
-                      setSearchQuery('');
                     }}
                     className={`w-full text-left px-4 py-3 hover:bg-[#2BA89C]/5 transition-colors ${
                       searchType === type ? 'text-[#2BA89C] font-medium bg-[#2BA89C]/10' : 'text-gray-700'
