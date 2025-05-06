@@ -377,7 +377,7 @@ const updateCache = (prevCache, key, value) => {
                     index === selectedSuggestion ? 'bg-[#2BA89C]/10' : ''
                   }`}
                 >
-                  <div className="font-medium">
+                  <div className="font-medium text-gray">
                     {highlightMatch(suggestion.text)}
                   </div>
                   <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600 ml-2">
