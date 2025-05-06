@@ -41,20 +41,6 @@ const SearchPage = ({ searchType }) => {
 
     let url = `/api/drugs/search/${type}?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
     let options = { method: 'GET' };
-    // if(mode === 'natural') { //자연어 검색
-    //   url = '/api/drugs/search';
-    //   options = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ query, page: apiPage, size: itemsPerPage })
-    //   };
-    // } else { // 키워드 검색 모드 분기
-    //   if(searchType === 'symptom') { // 증상 검색
-    //     url = `/api/drugs/search/symptom?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
-    //   } else if(searchType === 'name') { // 약품명 검색
-    //     url = `/api/drugs/search/name?q=${encodeURIComponent(query)}&page=${apiPage}&size=${itemsPerPage}`;
-    //   }
-    // }
     
     
     fetch(url, options) // 검색 타입에 따라 데이터 받아오는 방식 분기됨. !!! response 형식 정해지면 수정 필요
@@ -69,6 +55,9 @@ const SearchPage = ({ searchType }) => {
         // totalResponseCount가 있으면 그 값을 사용하고, 없으면 현재 목록 길이를 사용
         const totalCount = data.data.totalResponseCount;
         setTotalResults(totalCount);
+        if(mode === 'natural') {
+          setTotalResults(100);
+        }
       })
       .catch(err => setError(err.message))
       .finally(() => setIsLoading(false));
@@ -106,8 +95,14 @@ const SearchPage = ({ searchType }) => {
             <div className="mt-4 mb-2">
               <h2 className="text-lg font-medium text-gray-700">
                 <span className="text-[#2BA89C] font-bold">{query}</span> 검색 결과 
-                <span className="text-[#2BA89C] font-bold ml-2">{totalResults.toLocaleString()}</span>건
+                {mode !== 'natural' && (
+                  <span className="text-[#2BA89C] font-bold ml-2">{totalResults.toLocaleString()}</span>
+                )}
+                {mode !== 'natural' && '건'}
               </h2>
+              {mode === 'natural' && (
+                <p className="text-sm text-gray-500 mt-1">자연어 검색결과는 상위 {totalResults.toLocaleString()}건만 표시됩니다</p>
+              )}
             </div>
           )}
           
@@ -123,9 +118,9 @@ const SearchPage = ({ searchType }) => {
                   className="bg-white rounded-lg shadow-sm p-4 border border-transparent hover:shadow-md hover:border-[#2BA89C] transition cursor-pointer"
                   onClick={() => navigateToDrugDetail(medicine.drugId)}
                 >
-                  <div className="flex divide-x divide-gray-200">
+                  <div className="flex flex-col md:flex-row md:divide-x divide-gray-200">
                     {/* 이미지 영역 */}
-                    <div className="w-48 h-48 flex-shrink-0 pr-4">
+                    <div className="w-full md:w-48 h-48 flex-shrink-0 mx-auto md:mx-0 md:pr-4 mb-4 md:mb-0">
                       {medicine.imageUrl ? (
                         <img
                           src={medicine.imageUrl}
@@ -138,7 +133,7 @@ const SearchPage = ({ searchType }) => {
                     </div>
 
                     {/* 정보 영역 */}
-                    <div className="flex-1 mt-1 pl-4 space-y-3 divide-y divide-gray-300">
+                    <div className="flex-1 mt-1 md:pl-4 space-y-3 divide-y divide-gray-300">
                       {/* 명칭 */}
                       <div className="flex items-center space-x-2 py-2">
                         <span className="flex-shrink-0 w-18 px-2 py-1 bg-[#2BA89C]/80 rounded font-bold text-white text-center whitespace-nowrap">
