@@ -350,7 +350,7 @@ const updateCache = (prevCache, key, value) => {
             onFocus={() => setIsFocused(true)}
             onBlur={handleBlur}
             maxLength={searchMode === 'natural' ? 20 : undefined}
-            className={`w-full pl-16 pr-4 py-4 border rounded-lg focus:outline-none transition-all hover:shadow-md placeholder-gray-900 placeholder-opacity-100 ${
+            className={`w-full pl-16 pr-4 py-4 border rounded-lg focus:outline-none transition-all hover:shadow-md placeholder-gray-900 placeholder-opacity-100 text-black ${
               searchMode === 'keyword'
                 ? 'border-[#2BA89C] focus:ring-2 focus:ring-[#2BA89C]/20'
                 : 'border-[#2978F2] focus:ring-2 focus:ring-[#2978F2]/20'
