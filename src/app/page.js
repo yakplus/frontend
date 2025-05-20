@@ -45,7 +45,7 @@ const Home = () => {
   const [recentSearches, setRecentSearches] = useState([]);
   const [searchBarProps, setSearchBarProps] = useState({
     initialQuery: '',
-    initialMode: 'keyword',
+    initialMode: 'natural',
     initialType: 'symptom'
   });
   const searchBarRef = useRef(null);
