@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  next-app:
+    build:
+      context: .     
+      dockerfile: Dockerfile
+    container_name: yakplus-frontend
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "13000:3000"   
+    restart: unless-stopped
+    networks:
+      - deploy_yakplus
+      
+networks:
+  deploy_yakplus:
+    external: true
