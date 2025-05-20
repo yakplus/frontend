@@ -37,7 +37,7 @@ const SearchIcon = ({ color = '#2BA89C', onClick }) => (
   </button>
 );
 
-const SearchBar = ({ initialQuery = '', showTabs = true, initialMode = 'keyword', initialType = 'symptom'}) => {
+const SearchBar = ({ initialQuery = '', showTabs = true, initialMode = 'natural', initialType = 'symptom'}) => {
   const router = useRouter();
   const [searchMode, setSearchMode] = useState(initialMode);
   const [searchType, setSearchType] = useState(initialType);
