@@ -307,19 +307,6 @@ const updateCache = (prevCache, key, value) => {
         <div className="flex mb-4 border-b border-gray-200">
           <button
             className={`px-8 py-3 font-medium transition-all ${
-              searchMode === 'keyword'
-                ? 'text-[#2BA89C] border-b-2 border-[#2BA89C]'
-                : 'text-gray-500 hover:text-[#2BA89C]'
-            }`}
-            onClick={() => {
-              setSearchMode('keyword');
-              setSearchQuery('');
-            }}
-          >
-            키워드
-          </button>
-          <button
-            className={`px-8 py-3 font-medium transition-all ${
               searchMode === 'natural'
                 ? 'text-[#2978F2] border-b-2 border-[#2978F2]'
                 : 'text-gray-500 hover:text-[#2978F2]'
@@ -330,6 +317,19 @@ const updateCache = (prevCache, key, value) => {
             }}
           >
             자연어
+          </button>
+          <button
+            className={`px-8 py-3 font-medium transition-all ${
+              searchMode === 'keyword'
+                ? 'text-[#2BA89C] border-b-2 border-[#2BA89C]'
+                : 'text-gray-500 hover:text-[#2BA89C]'
+            }`}
+            onClick={() => {
+              setSearchMode('keyword');
+              setSearchQuery('');
+            }}
+          >
+            키워드
           </button>
         </div>
       )}
